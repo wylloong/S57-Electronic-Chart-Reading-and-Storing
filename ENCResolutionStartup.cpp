@@ -1,3 +1,9 @@
+/*******************************************************************
+Copyright(c) 2017, waylon
+All rights reserved.
+Distributed under the BSD license.
+*******************************************************************/
+
 #include "S57Reader.h"
 #include <iostream>
 #include <string>
@@ -11,9 +17,9 @@ void S57Reader(string encpath)
 	LISTINT objllist;
 
 	/*
-	Underwater/awash rock Æ½Ë®½¸     153
-	Land area             Â½µØ       71
-	Depth contour         µÈË®ÉîÏß   43
+	Underwater/awash rock å¹³æ°´ç¤     153
+	Land area             é™†åœ°       71
+	Depth contour         ç­‰æ°´æ·±çº¿   43
 	*/
 
 	//choose filter shapelayer
@@ -32,14 +38,14 @@ void S57Reader(string encpath)
 
 int main()
 {
-	cout << "******»¶Ó­Ê¹ÓÃµç×Óº£Í¼½âÎöÈí¼ş******" << endl;
-	cout << "  ÇëÊäÈë´ı½âÎöµç×Óº£Í¼Â·¾¶£¬°´Enter¼üÈ·ÈÏ" << endl;
+	cout << "******æ¬¢è¿ä½¿ç”¨ç”µå­æµ·å›¾è§£æè½¯ä»¶******" << endl;
+	cout << "  è¯·è¾“å…¥å¾…è§£æç”µå­æµ·å›¾è·¯å¾„ï¼ŒæŒ‰Enteré”®ç¡®è®¤" << endl;
 
 	//US1BS01M USA
 	string ENCpath = "E://US1BS01M.000";
 
 	S57Reader(ENCpath);
-	cout << "  µç×Óº£Í¼ÎÄ¼ş½âÎöÍê³É,°´ÈÎÒâ¼üÍË³ö£¡" << endl;
+	cout << "  ç”µå­æµ·å›¾æ–‡ä»¶è§£æå®Œæˆ,æŒ‰ä»»æ„é”®é€€å‡ºï¼" << endl;
 	getchar();
 	return 0;
 }
