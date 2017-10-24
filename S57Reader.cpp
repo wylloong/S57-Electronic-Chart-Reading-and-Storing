@@ -1,3 +1,9 @@
+/*******************************************************************
+Copyright(c) 2017, waylon
+All rights reserved.
+Distributed under the BSD license.
+*******************************************************************/
+
 #include "S57Reader.h"
 #include <vector>
 #include <fstream>
@@ -16,22 +22,22 @@ typedef list<int> LISTINT;
 // function: save geoInfo into xml format
 static void SavetoXML(const char* pFilename, EleChartInfo Geolayer)
 {
-	cout << "  ÎÄ¼ş±£´æÖĞ..." << endl;
-	//´´½¨Ò»¸öXMLµÄÎÄµµ¶ÔÏó£¬¶ÔÓ¦ÓÚXMLµÄÕû¸öÎÄµµ
+	cout << "  æ–‡ä»¶ä¿å­˜ä¸­..." << endl;
+	//åˆ›å»ºä¸€ä¸ªXMLçš„æ–‡æ¡£å¯¹è±¡ï¼Œå¯¹åº”äºXMLçš„æ•´ä¸ªæ–‡æ¡£
 	TiXmlDocument doc;
-	//¶ÔÓ¦ÓÚXMLµÄÔªËØ
+	//å¯¹åº”äºXMLçš„å…ƒç´ 
 	TiXmlElement* msg;
 	//comment;
 	string s;
-	//XMLÖĞµÄÉêÃ÷²¿·Ö
+	//XMLä¸­çš„ç”³æ˜éƒ¨åˆ†
 	//TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "", "");
 	TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "", "");
 
 	doc.LinkEndChild(decl);
-	//´´½¨Ò»¸ö¸ùÔªËØ²¢Á¬½Ó
+	//åˆ›å»ºä¸€ä¸ªæ ¹å…ƒç´ å¹¶è¿æ¥
 	TiXmlElement * root = new TiXmlElement("ENCInfo");
 	doc.LinkEndChild(root);
-	//×¢ÊÍ
+	//æ³¨é‡Š
 	TiXmlComment * comment = new TiXmlComment();
 	s = " GeographInfo for " + Geolayer.Chart_Name + " ";
 	comment->SetValue(s.c_str());
@@ -49,17 +55,17 @@ static void SavetoXML(const char* pFilename, EleChartInfo Geolayer)
 		{
 			TiXmlElement * layersNode = new TiXmlElement("LayerInfo");
 			root->LinkEndChild(layersNode);
-			const EncLayer& w = *iter;  //wÎªÒ»¸ölayerÊµÀı
+			const EncLayer& w = *iter;  //wä¸ºä¸€ä¸ªlayerå®ä¾‹
 			TiXmlElement * window = new TiXmlElement("Layer");
 			layersNode->LinkEndChild(window);
-			//ÉèÖÃÔªËØµÄÊôĞÔ
+			//è®¾ç½®å…ƒç´ çš„å±æ€§
 			window->SetAttribute("id", w.layer_ID);
-			//´´½¨ÔªËØ²¢Á¬½Ó
+			//åˆ›å»ºå…ƒç´ å¹¶è¿æ¥
 			TiXmlElement *layerNameElement = new TiXmlElement("layerName");
 			window->LinkEndChild(layerNameElement);
 			TiXmlText *layerNameContent = new TiXmlText(w.layer_Name.c_str());
 			layerNameElement->LinkEndChild(layerNameContent);
-			list<GeoFeature> ww = w.GeoFeaturelist;  //ÒªËØµÄlist
+			list<GeoFeature> ww = w.GeoFeaturelist;  //è¦ç´ çš„list
 			{
 				TiXmlElement * FeaturesNode = new TiXmlElement("Features");
 				window->LinkEndChild(FeaturesNode);
@@ -70,9 +76,9 @@ static void SavetoXML(const char* pFilename, EleChartInfo Geolayer)
 
 					TiXmlElement * FeatureEle = new TiXmlElement("Feature");
 					FeaturesNode->LinkEndChild(FeatureEle);
-					//ÉèÖÃÔªËØµÄÊôĞÔ
+					//è®¾ç½®å…ƒç´ çš„å±æ€§
 					FeatureEle->SetAttribute("id", feature.Feature_ID);
-					//´´½¨ÔªËØ²¢Á¬½Ó
+					//åˆ›å»ºå…ƒç´ å¹¶è¿æ¥
 					//Feature_Type
 					TiXmlElement *TypeElement = new TiXmlElement("Type");
 					FeatureEle->LinkEndChild(TypeElement);
@@ -89,7 +95,7 @@ static void SavetoXML(const char* pFilename, EleChartInfo Geolayer)
 					TiXmlText *valdcoContent = new TiXmlText(to_string(feature.Feature_valdco).c_str());
 					valdcoElement->LinkEndChild(valdcoContent);
 
-					list<EleChartWaypoint> ww = feature.EleChartWaypointlist;  //µãµÄlist
+					list<EleChartWaypoint> ww = feature.EleChartWaypointlist;  //ç‚¹çš„list
 					{
 						TiXmlElement * PointsNode = new TiXmlElement("wayPoints");
 						FeatureEle->LinkEndChild(PointsNode);
@@ -100,7 +106,7 @@ static void SavetoXML(const char* pFilename, EleChartInfo Geolayer)
 
 							TiXmlElement * waypointEle = new TiXmlElement("waypoint");
 							PointsNode->LinkEndChild(waypointEle);
-							//´´½¨ÔªËØ²¢Á¬½Ó
+							//åˆ›å»ºå…ƒç´ å¹¶è¿æ¥
 							TiXmlElement *IDElement = new TiXmlElement("id");
 							waypointEle->LinkEndChild(IDElement);
 							TiXmlText *IDContent = new TiXmlText(to_string(point.waypoint_ID).c_str());
@@ -133,7 +139,7 @@ void OpenS57File(string lpFileName, list<int> ObjlList, double filter_lllat, dou
 	list<GeoFeature> GeoFeature_list;
 	list<EncLayer> GeoLayer_list;
 	EncLayer encLayerInfo;
-	OGRRegisterAll();  //×¢²áGDAL/OGRÖ§³ÖµÄËùÓĞ¸ñÊ½
+	OGRRegisterAll();  //æ³¨å†ŒGDAL/OGRæ”¯æŒçš„æ‰€æœ‰æ ¼å¼
 	OGRDataSource  *poDS;
 	CPLSetConfigOption("OGR_S57_OPTIONS", "SPLIT_MULTIPOINT=ON,ADD_SOUNDG_DEPTH=ON");
 	poDS = OGRSFDriverRegistrar::Open(lpFileName.c_str(), FALSE);
@@ -142,9 +148,9 @@ void OpenS57File(string lpFileName, list<int> ObjlList, double filter_lllat, dou
 	{
 		cout << "open FAILED!" << endl;
 	}
-	cout << "  ÎÄ¼ş¶ÁÈ¡ÖĞ..." << endl;
-	const char *pStr = poDS->GetName(); //»ñÈ¡.000ÎÄ¼şÃû³ÆÂ·¾¶
-	//¸ù¾İÊ±¼ä´´½¨xmlÎÄ¼şÃû
+	cout << "  æ–‡ä»¶è¯»å–ä¸­..." << endl;
+	const char *pStr = poDS->GetName(); //è·å–.000æ–‡ä»¶åç§°è·¯å¾„
+	//æ ¹æ®æ—¶é—´åˆ›å»ºxmlæ–‡ä»¶å
 	SYSTEMTIME sTime;
 	GetSystemTime(&sTime);
 	string xmlfileName = to_string(sTime.wYear) + to_string(sTime.wMonth) + to_string(sTime.wDay) + "_" + to_string(sTime.wHour) + to_string(sTime.wMinute) + to_string(sTime.wSecond)+ "_" + "ENCResolution";
@@ -152,102 +158,102 @@ void OpenS57File(string lpFileName, list<int> ObjlList, double filter_lllat, dou
 
 	OGRLayer  *poLayer;
 	OGREnvelope *pEnvelope = new OGREnvelope;
-	//Ò»¸öOGRDataSource¿ÉÄÜ°üº¬ºÜ¶àµÄ²ã£¬µ÷ÓÃ OGRDataSource::GetLayerCount()µÃµ½
+	//ä¸€ä¸ªOGRDataSourceå¯èƒ½åŒ…å«å¾ˆå¤šçš„å±‚ï¼Œè°ƒç”¨ OGRDataSource::GetLayerCount()å¾—åˆ°
 	poLayer = poDS->GetLayer(0);
-	//->½á¹¹»òÀàµÄÖ¸ÕëµÄ³ÉÔ±±äÁ¿»òÕß³ÉÔ±º¯Êı£¬ÊÇÀà»ò½á¹¹ÌåÖ¸Õë·ÃÎÊÆä³ÉÔ±±äÁ¿»òº¯ÊıµÄ·½Ê½
+	//->ç»“æ„æˆ–ç±»çš„æŒ‡é’ˆçš„æˆå‘˜å˜é‡æˆ–è€…æˆå‘˜å‡½æ•°ï¼Œæ˜¯ç±»æˆ–ç»“æ„ä½“æŒ‡é’ˆè®¿é—®å…¶æˆå‘˜å˜é‡æˆ–å‡½æ•°çš„æ–¹å¼
 	poLayer->GetExtent(pEnvelope);
-	//µÃµ½Í¼²ã°üÂçÇøÓò
+	//å¾—åˆ°å›¾å±‚åŒ…ç»œåŒºåŸŸ
 	double MaxX = pEnvelope->MaxX;
 	double MaxY = pEnvelope->MaxY;
 	double MinX = pEnvelope->MinX;
 	double MinY = pEnvelope->MinY;
 
 	delete pEnvelope;
-	int objectName = 0;  //OBJL±àºÅ
+	int objectName = 0;  //OBJLç¼–å·
 	int layerIndex = 0;
-	double VALDCO;  //Ë®Éî
+	double VALDCO;  //æ°´æ·±
 	int layerobjl = 0;
-	//°´Í¼²ã·Ö²ã¶ÁÈ¡S57ÖĞµÄÊı¾İ
+	//æŒ‰å›¾å±‚åˆ†å±‚è¯»å–S57ä¸­çš„æ•°æ®
 	for (layerIndex = 0; layerIndex < poDS->GetLayerCount(); layerIndex++)
 	{
-		poLayer = poDS->GetLayer(layerIndex);   //µÃµ½S57µ¥¸öÍ¼²ãĞÅÏ¢
-		//¶ÁÈ¡²ãÀïÃæµÄfeatures
+		poLayer = poDS->GetLayer(layerIndex);   //å¾—åˆ°S57å•ä¸ªå›¾å±‚ä¿¡æ¯
+		//è¯»å–å±‚é‡Œé¢çš„features
 		OGRFeature *poFeature;		
-		poLayer->ResetReading();   //´Ó²ãµÄ¿ªÍ·¿ªÊ¼¶ÁÈ¡feature
+		poLayer->ResetReading();   //ä»å±‚çš„å¼€å¤´å¼€å§‹è¯»å–feature
 		OGRFeatureDefn *poFDefn = poLayer->GetLayerDefn();
 		encLayerInfo.layer_Name = poFDefn->GetName();
-		//µ÷ÓÃGetNextFeature±éÀúËùÓĞµÄfeature
+		//è°ƒç”¨GetNextFeatureéå†æ‰€æœ‰çš„feature
 		while ((poFeature = poLayer->GetNextFeature()) != NULL)
 		{
 			int nOBJL=0;
 			int pID = poFeature->GetFID();
 			int iField;
 			objectName = 0;
-			//»ñµÃÒ»¸öÒªËØfeatureµÄËùÓĞ×Ö¶Îfield
+			//è·å¾—ä¸€ä¸ªè¦ç´ featureçš„æ‰€æœ‰å­—æ®µfield
 			for (iField = 0; iField < poFDefn->GetFieldCount(); iField++)
 			{
-				//µÃµ½ÊôĞÔÊı¾İ
+				//å¾—åˆ°å±æ€§æ•°æ®
 				OGRFieldDefn *poFieldDefn = poFDefn->GetFieldDefn(iField);
-				//×Ö¶ÎÃû³Æ
+				//å­—æ®µåç§°
 				string fieldtemp = poFieldDefn->GetNameRef();
-				//×Ö¶ÎÀàĞÍ
+				//å­—æ®µç±»å‹
 				OGRFieldType fieldType = poFieldDefn->GetType();
 				const char *pFieldTypeName = poFieldDefn->GetFieldTypeName(fieldType);
 				string Typetemp = pFieldTypeName;  
-				//×Ö¶ÎÖµ
+				//å­—æ®µå€¼
 				string fieldTypeValue = "";
-				if (poFieldDefn->GetType() == OFTInteger)  //ÊôĞÔµÄÀàĞÍÊÇÕûĞÎ
+				if (poFieldDefn->GetType() == OFTInteger)  //å±æ€§çš„ç±»å‹æ˜¯æ•´å½¢
 					fieldTypeValue = to_string(poFeature->GetFieldAsInteger(iField));
-				else if (poFieldDefn->GetType() == OFTReal) //ÊôĞÔµÄÀàĞÍÊÇ¸¡µãĞÍ
+				else if (poFieldDefn->GetType() == OFTReal) //å±æ€§çš„ç±»å‹æ˜¯æµ®ç‚¹å‹
 					fieldTypeValue = to_string(poFeature->GetFieldAsDouble(iField));
-				else if (poFieldDefn->GetType() == OFTString) //ÊôĞÔµÄÀàĞÍÊÇ×Ö·ûĞÍ
+				else if (poFieldDefn->GetType() == OFTString) //å±æ€§çš„ç±»å‹æ˜¯å­—ç¬¦å‹
 					fieldTypeValue = (poFeature->GetFieldAsString(iField));
 				else
 					fieldTypeValue = (poFeature->GetFieldAsString(iField));
 			}
 
-			int iOBJL = poFDefn->GetFieldIndex("OBJL");   //×Ö¶Î±àºÅ
-			//»ñµÃ¶ÔÓ¦ÓÚOBJLµÄÍ¼²ã±àºÅ£¬ÈçÂ½µØ¶ÔÓ¦objl=71
+			int iOBJL = poFDefn->GetFieldIndex("OBJL");   //å­—æ®µç¼–å·
+			//è·å¾—å¯¹åº”äºOBJLçš„å›¾å±‚ç¼–å·ï¼Œå¦‚é™†åœ°å¯¹åº”objl=71
 			layerobjl = poFeature->GetFieldAsInteger(iOBJL);
-			encLayerInfo.layer_ID = layerobjl;  //¸øÍ¼²ãÀà¸³ÓèÊôĞÔ
-			//²éÕÒlistÖĞÊÇ·ñ°üº¬iOBJL
-			list<int>::iterator index = find(ObjlList.begin(), ObjlList.end(), layerobjl); //²éÕÒ
+			encLayerInfo.layer_ID = layerobjl;  //ç»™å›¾å±‚ç±»èµ‹äºˆå±æ€§
+			//æŸ¥æ‰¾listä¸­æ˜¯å¦åŒ…å«iOBJL
+			list<int>::iterator index = find(ObjlList.begin(), ObjlList.end(), layerobjl); //æŸ¥æ‰¾
 			if (index != ObjlList.end())
 			{
 				if (43 == poFeature->GetFieldAsInteger(iOBJL))
 				{
-					//Depth contour µÈË®ÉîÏß
+					//Depth contour ç­‰æ°´æ·±çº¿
 					VALDCO = poFeature->GetFieldAsDouble("VALDCO");
 				}
 				else
 					VALDCO = -1;
 			}
 			else
-				break;   //²»¶ÔÆäËüÍ¼²ã½øĞĞ¼¸ºÎĞÎ×´½âÎö
-			//ÌáÈ¡¼¸ºÎÊı¾İgeometry,²¢ÓÃx¡¢y¡¢z±ê³öÀ´
+				break;   //ä¸å¯¹å…¶å®ƒå›¾å±‚è¿›è¡Œå‡ ä½•å½¢çŠ¶è§£æ
+			//æå–å‡ ä½•æ•°æ®geometry,å¹¶ç”¨xã€yã€zæ ‡å‡ºæ¥
 			OGRGeometry *poGeometry;
-			poGeometry = poFeature->GetGeometryRef();  //»ñÈ¡¸ÃÒªËØµÄ¼¸ºÎĞÎ×´,·µ»ØÒ»¸öÖ¸ÏòÊôÓÚOGRFeatureµÄÄÚ²¿¼¸ºÎÊı¾İµÄÖ¸Õë
+			poGeometry = poFeature->GetGeometryRef();  //è·å–è¯¥è¦ç´ çš„å‡ ä½•å½¢çŠ¶,è¿”å›ä¸€ä¸ªæŒ‡å‘å±äºOGRFeatureçš„å†…éƒ¨å‡ ä½•æ•°æ®çš„æŒ‡é’ˆ
 			if (poGeometry != NULL)
 			{
-				list<EleChartWaypoint> eleChartWaypoint_list;  //µã×ø±ê¼¯ºÏlist
+				list<EleChartWaypoint> eleChartWaypoint_list;  //ç‚¹åæ ‡é›†åˆlist
 				GeoFeature geoFeature;
 				geoFeature.Feature_ID = poFeature->GetFID();
-				geoFeature.Feature_layer = layerIndex;  //Í¼²ã±àºÅ
+				geoFeature.Feature_layer = layerIndex;  //å›¾å±‚ç¼–å·
 				geoFeature.Feature_valdco = VALDCO;
-				//Ö»´¦ÀíÂ½µØĞÅÏ¢ 71:Land area
+				//åªå¤„ç†é™†åœ°ä¿¡æ¯ 71:Land area
 				pStr = poGeometry->getGeometryName();
-				//InputToTxtFile(TxtFilePath, " ÒªËØ¼¸ºÎÀàĞÍ: " +(string)(pStr));
+				//InputToTxtFile(TxtFilePath, " è¦ç´ å‡ ä½•ç±»å‹: " +(string)(pStr));
 				//int k = poGeometry->getGeometryType();
 				if (poGeometry != NULL
 					&& wkbFlatten(poGeometry->getGeometryType()) == wkbPoint)
 				{
 					geoFeature.Feature_Type = "Point";
-					//µã×ø±ê
-					//wkbPlatten() ½«Ò»¸öwkbPoint25D(¾ßÓĞZ)×ª»¯Îª»ùÓÚ2DµÄÀàĞÍ(wkbPoint)
+					//ç‚¹åæ ‡
+					//wkbPlatten() å°†ä¸€ä¸ªwkbPoint25D(å…·æœ‰Z)è½¬åŒ–ä¸ºåŸºäº2Dçš„ç±»å‹(wkbPoint)
 					OGRPoint *poPoint = (OGRPoint *)poGeometry;
 					if (poPoint == NULL)
 					{
-						//InputToTxtFile(TxtFilePath, "  OGRLinePointÎªnull£¡");
+						//InputToTxtFile(TxtFilePath, "  OGRLinePointä¸ºnullï¼");
 					}
 					if (poPoint->getY()>filter_lllat &&poPoint->getY()<filter_urlat && poPoint->getX()>filter_lllon && poPoint->getX() < filter_urlon)
 					{
@@ -262,7 +268,7 @@ void OpenS57File(string lpFileName, list<int> ObjlList, double filter_lllat, dou
 					&& wkbFlatten(poGeometry->getGeometryType()) == wkbLineString)
 				{
 					geoFeature.Feature_Type = "Line";
-					//Ïß
+					//çº¿
 					OGRLineString *poLine = (OGRLineString *)poGeometry;
 					OGRPoint OgrPoint;
 					for (int i = 0; i<poLine->getNumPoints(); i++)
@@ -282,9 +288,9 @@ void OpenS57File(string lpFileName, list<int> ObjlList, double filter_lllat, dou
 					&& wkbFlatten(poGeometry->getGeometryType()) == wkbPolygon)
 				{
 					geoFeature.Feature_Type = "Polygon";
-					//¶à±ßĞÎ
+					//å¤šè¾¹å½¢
 					OGRPolygon *poPolygon = (OGRPolygon *)poGeometry;
-					OGRLineString *poLine = poPolygon->getExteriorRing();  //»ñÈ¡¸Ã¶à±ßĞÎµÄÍâ»·
+					OGRLineString *poLine = poPolygon->getExteriorRing();  //è·å–è¯¥å¤šè¾¹å½¢çš„å¤–ç¯
 					OGRPoint OgrPoint;
 					for (int i = 0; i<poLine->getNumPoints(); i++)
 					{
@@ -302,15 +308,15 @@ void OpenS57File(string lpFileName, list<int> ObjlList, double filter_lllat, dou
 				else
 				{}
 				geoFeature.EleChartWaypointlist = eleChartWaypoint_list;
-				GeoFeature_list.push_back(geoFeature);  //ÒªËØÖĞµãµÄlist
+				GeoFeature_list.push_back(geoFeature);  //è¦ç´ ä¸­ç‚¹çš„list
 			}//geo
-			//ÊÍ·Åfeature¿½±´£¬ÀûÓÃGDALº¯ÊıÉ¾³ı£¬±ÜÃâwin32 heapÎÊÌâ
+			//é‡Šæ”¾featureæ‹·è´ï¼Œåˆ©ç”¨GDALå‡½æ•°åˆ é™¤ï¼Œé¿å…win32 heapé—®é¢˜
 			OGRFeature::DestroyFeature(poFeature);
-			encLayerInfo.GeoFeaturelist=(GeoFeature_list);   //ÒªËØµÄ¼¯ºÏ
+			encLayerInfo.GeoFeaturelist=(GeoFeature_list);   //è¦ç´ çš„é›†åˆ
 		} //Feature
-		eleChartInfo.Geolayerlist.push_back(encLayerInfo);   //Í¼²ãµÄ¼¯ºÏ
-	} //Í¼²ã
-	//É¾³ıÊı¾İÎÄ¼şÒ»¸öÍ¼²ã´Ó¶ø¹Ø±ÕÊäÈëµÄÎÄ¼ş
+		eleChartInfo.Geolayerlist.push_back(encLayerInfo);   //å›¾å±‚çš„é›†åˆ
+	} //å›¾å±‚
+	//åˆ é™¤æ•°æ®æ–‡ä»¶ä¸€ä¸ªå›¾å±‚ä»è€Œå…³é—­è¾“å…¥çš„æ–‡ä»¶
 	OGRDataSource::DestroyDataSource(poDS);
-	SavetoXML(xmlFilePath.c_str(), eleChartInfo);  //±£´æµ½XML
+	SavetoXML(xmlFilePath.c_str(), eleChartInfo);  //ä¿å­˜åˆ°XML
 }
